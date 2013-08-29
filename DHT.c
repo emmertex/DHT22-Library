@@ -1,5 +1,5 @@
 /*
- * DHT11/22 Library for Netcruzer (MODTRONIX) by Andrew Frahn (EMMERTEX)
+ * DHT22 Library for Netcruzer (MODTRONIX) by Andrew Frahn (EMMERTEX)
  * emmertex@gmail.com
 */
 
@@ -24,7 +24,7 @@ void DHTTask() {
     BYTE j = 0, i;
     switch (DHTState) {
         case S_START:
-            if ((getTick16bit_1ms() - lastTime) >= 2000) {
+            if ((getTick16bit_1ms() - lastTime) >= _readInterval) {
                 _pinDir = OUTPUT_PIN;
                 _pinOut = 1;
                 lastTime = getTick16bit_1ms();
@@ -58,11 +58,11 @@ void DHTTask() {
                     while (_pinIn == laststate) {
                         counter++;
                         
-                        if (counter == 130) {
+                        if (counter == _maxCount) {
                             break;
                        
                         }
-                    if (counter == 255) break;
+                    if (counter == _maxCount) break;
                     }
                     laststate = _pinIn;
 

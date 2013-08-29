@@ -2,17 +2,22 @@
 #define DHT_H
 
 /*
- * DHT11/22 Library for Netcruzer (MODTRONIX) by Andrew Frahn (EMMERTEX)
+ * DHT22 Library for Netcruzer (MODTRONIX) by Andrew Frahn (EMMERTEX)
  * emmertex@gmail.com
 */
 
 #include <HardwareProfile.h>
 
-#define _timings 100
-#define _count 85
-#define _pinDir DIR_Y9
-#define _pinIn PIN_Y9
-#define _pinOut OUT_Y9
+#define _timings 100 //Bits to be read, + extras (need 48 bits, 96 + 4 extra for fun)
+#define _count 85  //Count Threshold, when above this, bit is a 1
+#define _maxCount 130 //Count Max, when above this, end of data stream
+#define _readInterval 2000 //milliseconds (aditional 280ms in other timings)
+            //Datasheet claims no more than 1 read per 2 seconds, tests have
+            //proven 480ms reads worked, and updated find in a short period of
+            //time.  Extended tests have not been done.
+#define _pinDir DIR_Y9  //Netcruzer Alias for Pin Direction (DIR_xx)
+#define _pinIn PIN_Y9   //Netcruzer Alias for Pin Read (PIN_xx)
+#define _pinOut OUT_Y9  //Netcruzer Alias for Pin Write (OUT_xx)
 
     static enum _DHTState
     {
@@ -21,11 +26,11 @@
         S_READ,
     } DHTState;
 
-
+  void initDHT();
   void DHTTask();
   WORD DHTTemperature();
   WORD DHTHumidity();
   BOOL DHTHealth();
-  void initDHT();
+  
 
 #endif
