@@ -9,16 +9,17 @@
 #include "nz_delay.h"
 
 BYTE data[6];
+WORD checksum;
 BYTE goodData[4];
 DWORD lastTime;
 BOOL health = 1;
 
-void initDHT() {
+void DHT_init() {
     DHTState = S_START;
     lastTime = getTick16bit_1ms();
 }
 
-void DHTTask() {
+void DHT_run() {
     BYTE laststate = 1;
     BYTE counter = 0;
     BYTE j = 0, i;
@@ -57,11 +58,7 @@ void DHTTask() {
                     counter = 0;
                     while (_pinIn == laststate) {
                         counter++;
-                        
-                        if (counter == _maxCount) {
-                            break;
-                       
-                        }
+                        if (counter == _maxCount) break;
                     if (counter == _maxCount) break;
                     }
                     laststate = _pinIn;
@@ -69,15 +66,15 @@ void DHTTask() {
 
                     if ((i % 2 == 0)) {
                         data[j / 8] <<= 1;
-                        if (counter > _count)
-                            data[j / 8] |= 1;
+                        if (counter > _count) data[j / 8] |= 1;
                         j++;
                     }
 
                 }
 
                 //Check Checksum
-                if (((data[0]+data[1]+data[2]+data[3]) & 255) == data[4]) {
+                checksum = data[0]+data[1]+data[2]+data[3];
+                if ((data[4] == (checksum & 255)) || (checksum == 0) || (checksum == 255)) {
                     goodData[0] = data[0];
                     goodData[1] = data[1];
                     goodData[2] = data[2];
@@ -97,14 +94,14 @@ void DHTTask() {
 }
 
 
-WORD DHTTemperature() {
+WORD DHT_readT() {
       return ((goodData[2] * 256) + goodData[3]);
 }
 
-WORD DHTHumidity() {
+WORD DHT_readH() {
       return ((goodData[0] * 256) + goodData[1]);
 }
 
-BOOL DHTHealth() {
+BOOL DHT_health() {
     return health;
 }

@@ -17,7 +17,7 @@
             //time.  Extended tests have not been done.
 #define _pinDir DIR_Y9  //Netcruzer Alias for Pin Direction (DIR_xx)
 #define _pinIn PIN_Y9   //Netcruzer Alias for Pin Read (PIN_xx)
-#define _pinOut OUT_Y9  //Netcruzer Alias for Pin Write (OUT_xx)
+#define _pinOut LAT_Y9  //Netcruzer Alias for Pin Write (LAT_xx)
 
     static enum _DHTState
     {
@@ -26,11 +26,11 @@
         S_READ,
     } DHTState;
 
-  void initDHT();
-  void DHTTask();
-  WORD DHTTemperature();
-  WORD DHTHumidity();
-  BOOL DHTHealth();
+  void DHT_init();
+  void DHT_run();
+  WORD DHT_readT();
+  WORD DHT_readH();
+  BOOL DHT_health();
   
 
 #endif
