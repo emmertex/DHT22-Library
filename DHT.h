@@ -15,9 +15,14 @@
             //Datasheet claims no more than 1 read per 2 seconds, tests have
             //proven 480ms reads worked, and updated find in a short period of
             //time.  Extended tests have not been done.
-#define _pinDir DIR_Y9  //Netcruzer Alias for Pin Direction (DIR_xx)
-#define _pinIn PIN_Y9   //Netcruzer Alias for Pin Read (PIN_xx)
-#define _pinOut LAT_Y9  //Netcruzer Alias for Pin Write (LAT_xx)
+#define _pin1Dir DIR_Y9  //Netcruzer Alias for Pin Direction (DIR_xx)
+#define _pin1In PIN_Y9   //Netcruzer Alias for Pin Read (PIN_xx)
+#define _pin1Out LAT_Y9  //Netcruzer Alias for Pin Write (LAT_xx)
+#define _pin2Dir DIR_Y8  //Netcruzer Alias for Pin Direction (DIR_xx)
+#define _pin2In PIN_Y8   //Netcruzer Alias for Pin Read (PIN_xx)
+#define _pin2Out LAT_Y8  //Netcruzer Alias for Pin Write (LAT_xx)
+#define _numSensors 2
+
 
     static enum _DHTState
     {

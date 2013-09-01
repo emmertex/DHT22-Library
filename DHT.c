@@ -10,11 +10,13 @@
 
 BYTE data[6];
 WORD checksum;
-BYTE goodData[4];
+BYTE goodData[4][2];
 DWORD lastTime;
-BOOL health = 1;
+BOOL health[2];
+BYTE sensor = 0;
 
 void DHT_init() {
+    health[0] = health[1] = 1;
     DHTState = S_START;
     lastTime = getTick16bit_1ms();
 }
@@ -26,8 +28,16 @@ void DHT_run() {
     switch (DHTState) {
         case S_START:
             if ((getTick16bit_1ms() - lastTime) >= _readInterval) {
-                _pinDir = OUTPUT_PIN;
-                _pinOut = 1;
+                sensor = 1 + sensor * (sensor < _numSensors);
+                switch (sensor) {
+                    case 0:
+                        _pin1Dir = OUTPUT_PIN;
+                        _pin1Out = 1;
+
+                    case 1:
+                        _pin2Dir = OUTPUT_PIN;
+                        _pin2Out = 1;
+                }
                 lastTime = getTick16bit_1ms();
                 DHTState = S_INIT;
             }
@@ -38,8 +48,15 @@ void DHT_run() {
         case S_INIT:
             if ((getTick16bit_1ms() - lastTime) >= 250) {
                 data[0] = data[1] = data[2] = data[3] = data[4] = data[5] = 0;
-                _pinDir = OUTPUT_PIN;
-                _pinOut = 0;
+                switch (sensor) {
+                    case 0:
+                        _pin1Dir = OUTPUT_PIN;
+                        _pin1Out = 0;
+
+                    case 1:
+                        _pin2Dir = OUTPUT_PIN;
+                        _pin2Out = 0;
+                }
                 lastTime = getTick16bit_1ms();
                 DHTState = S_READ;
             }
@@ -49,19 +66,40 @@ void DHT_run() {
         case S_READ:
             if ((getTick16bit_1ms() - lastTime) >= 20) {
                 j = 1;
-                _pinOut = 1;
+                switch (sensor) {
+                    case 0:
+                        _pin1Out = 1;
+
+                    case 1:
+                        _pin2Out = 1;
+                }
                 delay_us(1);
-                _pinDir = INPUT_PIN;
+                switch (sensor) {
+                    case 0:
+                        _pin1Dir = INPUT_PIN;
+
+                    case 1:
+                        _pin2Dir = INPUT_PIN;
+                }
 
 
                 for (i = 0; i < _timings; i++) {
                     counter = 0;
-                    while (_pinIn == laststate) {
-                        counter++;
-                        if (counter == _maxCount) break;
-                    if (counter == _maxCount) break;
-                    }
-                    laststate = _pinIn;
+                switch (sensor) {
+                    case 0:
+                        while (_pin1In == laststate) {
+                            counter++;
+                            if (counter == _maxCount) break;
+                        }
+                        laststate = _pin1In;
+
+                    case 1:
+                        while (_pin2In == laststate) {
+                            counter++;
+                            if (counter == _maxCount) break;
+                        }
+                        laststate = _pin2In;
+                }
 
 
                     if ((i % 2 == 0)) {
@@ -75,13 +113,14 @@ void DHT_run() {
                 //Check Checksum
                 checksum = data[0]+data[1]+data[2]+data[3];
                 if ((data[4] == (checksum & 255)) || (checksum == 0) || (checksum == 255)) {
-                    goodData[0] = data[0];
-                    goodData[1] = data[1];
-                    goodData[2] = data[2];
-                    goodData[3] = data[3];
-                    health = 0;
+                    BYTE i;
+                    for (i=0;i<4;i++)
+                    {
+                        goodData[i][sensor] = data[i];
+                    }
+                    health[sensor] = 0;
                 } else {
-                    health = 1;
+                    health[sensor] = 1;
                 }
 
                 lastTime = getTick16bit_1ms();
@@ -94,14 +133,14 @@ void DHT_run() {
 }
 
 
-WORD DHT_readT() {
-      return ((goodData[2] * 256) + goodData[3]);
+WORD DHT_readT(int i) {
+      return ((goodData[2][i] * 256) + goodData[3][i]);
 }
 
-WORD DHT_readH() {
-      return ((goodData[0] * 256) + goodData[1]);
+WORD DHT_readH(int i) {
+      return ((goodData[0][i] * 256) + goodData[1][i]);
 }
 
-BOOL DHT_health() {
-    return health;
+BOOL DHT_health(int i) {
+    return health[i];
 }
