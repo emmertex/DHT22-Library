@@ -24,7 +24,7 @@
 #define _pin2Out LAT_Y8  //Netcruzer Alias for Pin Write (LAT_xx)
 #define _numSensors 2
 
-extern BYTE sensor;
+//extern BYTE sensor;
 
     static enum _DHTState
     {
