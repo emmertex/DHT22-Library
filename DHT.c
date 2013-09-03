@@ -1,6 +1,8 @@
 /*
  * DHT22 Library for Netcruzer (MODTRONIX) by Andrew Frahn (EMMERTEX)
- * emmertex@gmail.com
+ 
+ Copyright 2013 - Andrew Frahn (Emmertex)
+  emmertex@gmail.com
  
  This work is licensed under the Creative Commons Attribution-ShareAlike 3.0 Australia License.
  To view a copy of this license, visit http://creativecommons.org/licenses/by-sa/3.0/au/.
