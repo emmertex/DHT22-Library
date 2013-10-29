@@ -28,7 +28,13 @@ Copyright 2013 - Andrew Frahn (Emmertex)
 #define _pin2Dir DIR_Y8  //Netcruzer Alias for Pin Direction (DIR_xx)
 #define _pin2In PIN_Y8   //Netcruzer Alias for Pin Read (PIN_xx)
 #define _pin2Out LAT_Y8  //Netcruzer Alias for Pin Write (LAT_xx)
-#define _numSensors 2
+#define _pin3Dir DIR_Y7  //Netcruzer Alias for Pin Direction (DIR_xx)
+#define _pin3In PIN_Y7   //Netcruzer Alias for Pin Read (PIN_xx)
+#define _pin3Out LAT_Y7  //Netcruzer Alias for Pin Write (LAT_xx)
+#define _pin4Dir DIR_Y6  //Netcruzer Alias for Pin Direction (DIR_xx)
+#define _pin4In PIN_Y6   //Netcruzer Alias for Pin Read (PIN_xx)
+#define _pin4Out LAT_Y6  //Netcruzer Alias for Pin Write (LAT_xx)
+#define _numSensors 4
 
 //extern BYTE sensor;
 
