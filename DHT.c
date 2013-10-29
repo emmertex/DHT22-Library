@@ -44,6 +44,14 @@ void DHT_run() {
                     case 2:
                         _pin2Dir = OUTPUT_PIN;
                         _pin2Out = 1;
+                        break;                    
+                    case 3:
+                        _pin3Dir = OUTPUT_PIN;
+                        _pin3Out = 1;
+                        break;                    
+                    case 4:
+                        _pin4Dir = OUTPUT_PIN;
+                        _pin4Out = 1;
                         break;
                 }
                 lastTime = getTick16bit_1ms();
@@ -66,6 +74,15 @@ void DHT_run() {
                         _pin2Dir = OUTPUT_PIN;
                         _pin2Out = 0;
                         break;
+                    case 3:
+                        _pin3Dir = OUTPUT_PIN;
+                        _pin3Out = 0;
+                        break;
+
+                    case 4:
+                        _pin4Dir = OUTPUT_PIN;
+                        _pin4Out = 0;
+                        break;
                 }
                 lastTime = getTick16bit_1ms();
                 DHTState = S_READ;
@@ -84,6 +101,14 @@ void DHT_run() {
                     case 2:
                         _pin2Out = 1;
                         break;
+                   
+                   case 3:
+                        _pin3Out = 1;
+                        break;
+
+                    case 4:
+                        _pin4Out = 1;
+                        break;
                 }
                 delay_us(1);
                 switch (sensor) {
@@ -93,6 +118,13 @@ void DHT_run() {
 
                     case 2:
                         _pin2Dir = INPUT_PIN;
+                        break;
+                    case 3:
+                        _pin3Dir = INPUT_PIN;
+                        break;
+
+                    case 4:
+                        _pin4Dir = INPUT_PIN;
                         break;
                 }
 
@@ -114,6 +146,21 @@ void DHT_run() {
                             if (counter == _maxCount) break;
                         }
                         laststate = _pin2In;
+                        break;
+                    case 3:
+                        while (_pin3In == laststate) {
+                            counter++;
+                            if (counter == _maxCount) break;
+                        }
+                        laststate = _pin3In;
+                        break;
+
+                    case 4:
+                        while (_pin4In == laststate) {
+                            counter++;
+                            if (counter == _maxCount) break;
+                        }
+                        laststate = _pin4In;
                         break;
                 }
 
