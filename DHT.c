@@ -22,7 +22,7 @@
 
 BYTE data[6];
 BYTE checksum;
-BYTE goodData[4][_numSensors];
+BYTE goodData[4][_numSensors + 1];  //goodData[0][0] is suffering a bug, so offset 1 on the array
 DWORD lastTime;
 BOOL health[_numSensors];
 BYTE sensor = 1;
@@ -185,33 +185,33 @@ void DHT_run() {
                 checksum = (data[0]+data[1]+data[2]+data[3])&0xFF;
 
                 if ((data[4] == checksum) || (checksum == 0) || (checksum == 255)) {
-                    DEBUG_PUT_STR(DEBUG_LEVEL_INFO, "\nSensor ");
-                    DEBUG_PUT_WORD(DEBUG_LEVEL_INFO, (sensor-1));
-                    DEBUG_PUT_STR(DEBUG_LEVEL_INFO, ": ");
+//                    DEBUG_PUT_STR(DEBUG_LEVEL_INFO, "\nSensor ");
+//                    DEBUG_PUT_WORD(DEBUG_LEVEL_INFO, (sensor-1));
+//                    DEBUG_PUT_STR(DEBUG_LEVEL_INFO, ": ");
 
                     BYTE i;
                     for (i=0;i<4;i++)
                     {
-                        goodData[i][sensor-1] = data[i];
-                        DEBUG_PUT_STR(DEBUG_LEVEL_INFO, "   ");
-                        DEBUG_PUT_WORD(DEBUG_LEVEL_INFO, goodData[i][sensor-1]);
+                        goodData[i][sensor] = data[i];
+//                        DEBUG_PUT_STR(DEBUG_LEVEL_INFO, "   ");
+//                        DEBUG_PUT_WORD(DEBUG_LEVEL_INFO, goodData[i][sensor]);
                     }
                     health[sensor-1] = 1;
                 } else {
                     health[sensor-1] = 0;
                 }
-/*
-                BYTE m,n;
-                for (m=0;m<4;m++){
-                    DEBUG_PUT_STR(DEBUG_LEVEL_INFO, "\nLine ");
-                    DEBUG_PUT_WORD(DEBUG_LEVEL_INFO, m);
-                    DEBUG_PUT_STR(DEBUG_LEVEL_INFO, ": ");
-                    for (n=0;n<4;n++){
-                        DEBUG_PUT_STR(DEBUG_LEVEL_INFO, " ");
-                        DEBUG_PUT_WORD(DEBUG_LEVEL_INFO, goodData[m][n]);
 
-                    }
-                }*/
+//                BYTE m,n;
+//               for (m=0;m<4;m++){
+//                    DEBUG_PUT_STR(DEBUG_LEVEL_INFO, "\nLine ");
+//                    DEBUG_PUT_WORD(DEBUG_LEVEL_INFO, m);
+//                    DEBUG_PUT_STR(DEBUG_LEVEL_INFO, ": ");
+//                    for (n=0;n<5;n++){
+//                        DEBUG_PUT_STR(DEBUG_LEVEL_INFO, " ");
+//                        DEBUG_PUT_WORD(DEBUG_LEVEL_INFO, goodData[m][n]);
+
+  //                  }
+//                }
 
                 lastTime = getTick16bit_1ms();
                 DHTState = S_START;
