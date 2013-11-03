@@ -9,18 +9,23 @@
  
 */
 
-
 #include <HardwareProfile.h>
 #include "DHT.h"
 #include "nz_tick.h"
 #include "nz_delay.h"
+#include "C:\Users\tech-pc\Documents\GitHub\Modbus-Library\Modbus.h"
+
+    #define MY_DEBUG_LEVEL  DEBUG_LEVEL_INFO    //Set debug level. All debug messages with equal or higher priority will be outputted
+
+#include "nz_debug.h"                           //Required for debugging. This include MUST be after "#define MY_DEBUG_LEVEL ..."!
+
 
 BYTE data[6];
-WORD checksum;
+BYTE checksum;
 BYTE goodData[4][_numSensors];
 DWORD lastTime;
 BOOL health[_numSensors];
-BYTE sensor = 0;
+BYTE sensor = 1;
 
 void DHT_init() {
     health[0] = health[1] = 1;
@@ -92,7 +97,7 @@ void DHT_run() {
 
         case S_READ:
             if ((getTick16bit_1ms() - lastTime) >= 20) {
-                j = 1;
+                j = 3;
                 switch (sensor) {
                     case 1:
                         _pin1Out = 1;
@@ -110,7 +115,7 @@ void DHT_run() {
                         _pin4Out = 1;
                         break;
                 }
-                delay_us(1);
+                delay_us(50);
                 switch (sensor) {
                     case 1:
                         _pin1Dir = INPUT_PIN;
@@ -128,7 +133,8 @@ void DHT_run() {
                         break;
                 }
 
-
+                
+                
                 for (i = 0; i < _timings; i++) {
                     counter = 0;
                 switch (sensor) {
@@ -166,25 +172,46 @@ void DHT_run() {
 
 
                     if ((i % 2 == 0)) {
+                        
                         data[j / 8] <<= 1;
                         if (counter > _count) data[j / 8] |= 1;
                         j++;
+                        
                     }
 
                 }
 
                 //Check Checksum
-                checksum = data[0]+data[1]+data[2]+data[3];
-                if ((data[4] == (checksum & 255)) || (checksum == 0) || (checksum == 255)) {
+                checksum = (data[0]+data[1]+data[2]+data[3])&0xFF;
+
+                if ((data[4] == checksum) || (checksum == 0) || (checksum == 255)) {
+                    DEBUG_PUT_STR(DEBUG_LEVEL_INFO, "\nSensor ");
+                    DEBUG_PUT_WORD(DEBUG_LEVEL_INFO, (sensor-1));
+                    DEBUG_PUT_STR(DEBUG_LEVEL_INFO, ": ");
+
                     BYTE i;
                     for (i=0;i<4;i++)
                     {
                         goodData[i][sensor-1] = data[i];
+                        DEBUG_PUT_STR(DEBUG_LEVEL_INFO, "   ");
+                        DEBUG_PUT_WORD(DEBUG_LEVEL_INFO, goodData[i][sensor-1]);
                     }
-                    health[sensor-1] = 0;
-                } else {
                     health[sensor-1] = 1;
+                } else {
+                    health[sensor-1] = 0;
                 }
+/*
+                BYTE m,n;
+                for (m=0;m<4;m++){
+                    DEBUG_PUT_STR(DEBUG_LEVEL_INFO, "\nLine ");
+                    DEBUG_PUT_WORD(DEBUG_LEVEL_INFO, m);
+                    DEBUG_PUT_STR(DEBUG_LEVEL_INFO, ": ");
+                    for (n=0;n<4;n++){
+                        DEBUG_PUT_STR(DEBUG_LEVEL_INFO, " ");
+                        DEBUG_PUT_WORD(DEBUG_LEVEL_INFO, goodData[m][n]);
+
+                    }
+                }*/
 
                 lastTime = getTick16bit_1ms();
                 DHTState = S_START;
@@ -196,14 +223,14 @@ void DHT_run() {
 }
 
 
-WORD DHT_readT(int i) {
-      return ((goodData[2][i] * 256) + goodData[3][i]);
+WORD DHT_readT(int k) {
+      return ((goodData[2][k] * 256) + goodData[3][k]);
 }
 
-WORD DHT_readH(int i) {
-      return ((goodData[0][i] * 256) + goodData[1][i]);
+WORD DHT_readH(int k) {
+      return ((goodData[0][k] * 256) + goodData[1][k]);
 }
 
-BOOL DHT_health(int i) {
-    return health[i];
+BOOL DHT_health(int k) {
+    return health[k];
 }
