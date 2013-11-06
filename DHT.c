@@ -24,7 +24,7 @@ BYTE data[6];
 BYTE checksum;
 BYTE goodData[4][_numSensors + 1];  //goodData[0][0] is suffering a bug, so offset 1 on the array
 DWORD lastTime;
-BOOL health[_numSensors];
+BOOL health[_numSensors + 1];
 BYTE sensor = 1;
 
 void DHT_init() {
@@ -196,9 +196,9 @@ void DHT_run() {
 //                        DEBUG_PUT_STR(DEBUG_LEVEL_INFO, "   ");
 //                        DEBUG_PUT_WORD(DEBUG_LEVEL_INFO, goodData[i][sensor]);
                     }
-                    health[sensor-1] = 1;
+                    health[sensor] = 1;
                 } else {
-                    health[sensor-1] = 0;
+                    health[sensor] = 0;
                 }
 
 //                BYTE m,n;
